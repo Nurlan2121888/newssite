@@ -1,0 +1,4 @@
+<div class="story-meta">
+    <span>{{ story.source }}</span>
+    {% if story.published_at %}<span class="meta-dot" aria-hidden="true">·</span><time datetime="{{ story.published_at|date:'c' }}">{{ story.published_at|date:'d.m · H:i' }}</time>{% endif %}
+</div>

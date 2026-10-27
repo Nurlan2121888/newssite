@@ -1,0 +1,27 @@
+{% extends 'news/base.html' %}
+{% block title %}{{ item.title }}{% endblock %}
+{% block description %}{{ item.summary|truncatechars:160 }}{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Səhifə yolu"><a href="{% url 'news:news_list' %}">Əsas səhifə</a><span aria-hidden="true">/</span>{% if item.category %}<a href="{% url 'news:news_list' %}?category={{ item.category.slug|urlencode }}">{{ item.category.name }}</a><span aria-hidden="true">/</span>{% endif %}<span>Xəbər</span></nav>
+
+<article class="article-page">
+    <header class="article-header">
+        <div class="article-kicker">{% if item.category %}<span class="category-label">{{ item.category.name }}</span>{% endif %}<span class="reading-time">Təxminən {{ reading_minutes }} dəqiqəlik oxu</span></div>
+        <h1>{{ item.title }}</h1>
+        {% if item.summary %}<p class="article-deck">{{ item.summary }}</p>{% endif %}
+        <div class="article-byline"><div class="source-symbol" aria-hidden="true">{{ item.source|first|upper }}</div><div><span class="byline-caption">MƏNBƏ</span><strong>{{ item.source }}</strong></div><div class="byline-date"><time datetime="{{ item.published_at|date:'c' }}">{{ item.published_at|date:'d.m.Y' }}</time><span>{{ item.published_at|date:'H:i' }} · Bakı vaxtı</span></div><span class="view-count">{{ item.views_count }} baxış</span></div>
+    </header>
+
+    <div class="article-layout">
+        <div class="article-main">
+            {% if item.image_url %}<figure class="article-figure"><img src="{{ item.image_url }}" alt="" fetchpriority="high" referrerpolicy="no-referrer"><figcaption>Foto: {{ item.source }}</figcaption></figure>{% endif %}
+            <div class="article-body">{{ article_content|linebreaks }}</div>
+            <div class="article-end"><span class="end-mark" aria-hidden="true"></span><span>Xəbərin sonu</span><a href="{% url 'news:news_list' %}">Gündəmə qayıt </a></div>
+        </div>
+
+        {% if related_news %}
+            <aside class="related-column" aria-labelledby="related-title"><div class="related-heading"><span class="section-index">OXUMAĞA DAVAM ET</span><h2 id="related-title">{{ related_heading }}<span class="heading-dot">.</span></h2><p>{{ related_description }}</p></div><div class="related-grid">{% for story in related_news %}{% include 'news/includes/story_card.html' %}{% endfor %}</div></aside>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

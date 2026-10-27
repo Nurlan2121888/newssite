@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#14232f">
+    <meta name="description" content="{% block description %}Azərbaycan dilində cari ayın xəbərləri. Siyasət, iqtisadiyyat, idman və yerli gündəm.{% endblock %}">
+    <title>{% block title %}Azərbaycan xəbərləri{% endblock %} — GÜNDƏM</title>
+    <link rel="icon" href="{% static 'news/favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'news/css/editorial.css' %}?v=3">
+</head>
+<body id="top">
+    <a class="skip-link" href="#main-content">Məzmuna keç</a>
+
+    <div class="top-strip">
+        <div class="shell top-strip-inner">
+            <span><span class="tiny-dot" aria-hidden="true"></span> AZƏRBAYCAN DİLİNDƏ XƏBƏRLƏR</span>
+            <time datetime="{{ edition_date|date:'c' }}">{{ edition_date|date:'d.m.Y' }} <span class="top-location">/ BAKI</span></time>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="shell masthead">
+            <div class="masthead-note"><span class="note-line"></span><p>Hər xəbərin<br>bir davamı var.</p></div>
+            <a class="wordmark" href="{% url 'news:news_list' %}" aria-label="Gündəm — əsas səhifə">gündəm<span>.</span></a>
+            <div class="edition-mark"><span class="edition-label">AYIN XƏBƏR XƏRİTƏSİ</span><strong>{{ total_news }}<span> xəbər</span></strong></div>
+        </div>
+
+        <div class="nav-border">
+            <nav class="shell category-nav" aria-label="Xəbər kateqoriyaları">
+                <a href="{% url 'news:news_list' %}" class="nav-link{% if not selected_category %} is-active{% endif %}" {% if not selected_category %}aria-current="page"{% endif %}>Bütün xəbərlər</a>
+                {% for category in navigation_categories %}
+                    <a href="{% url 'news:news_list' %}?category={{ category.slug|urlencode }}" class="nav-link{% if selected_category.pk == category.pk %} is-active{% endif %}" {% if selected_category.pk == category.pk %}aria-current="page"{% endif %}>{{ category.name }}</a>
+                {% endfor %}
+                <a class="nav-archive" href="{% url 'news:news_list' %}#news-grid">Bu ay </a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="shell page-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-top">
+            <a class="wordmark footer-wordmark" href="{% url 'news:news_list' %}">gündəm<span>.</span></a>
+            <p>Dəyişən dünya.<br><strong>Oxumağa davam et.</strong></p>
+            <a class="back-top" href="#top">Yuxarı qayıt </a>
+        </div>
+        <div class="shell footer-bottom"><span>© {% now 'Y' %} Gündəm · Azərbaycan xəbərləri</span><span>Mənbələr: Oxu.az / Ayna.az</span></div>
+    </footer>
+</body>
+</html>

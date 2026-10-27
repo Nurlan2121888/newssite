@@ -1,0 +1,12 @@
+<article class="story-card" data-news-id="{{ story.pk }}">
+    <a class="story-image-link" href="{% url 'news:news_detail' story.slug %}" tabindex="-1" aria-hidden="true">
+        {% if story.image_url %}<img src="{{ story.image_url }}" alt="" loading="lazy" referrerpolicy="no-referrer">{% else %}<span class="image-placeholder">g<span>.</span></span>{% endif %}
+
+    </a>
+    <div class="story-card-body">
+        {% if story.category %}<a class="category-label" href="{% url 'news:news_list' %}?category={{ story.category.slug|urlencode }}">{{ story.category.name }}</a>{% endif %}
+        <h3><a href="{% url 'news:news_detail' story.slug %}">{{ story.title }}</a></h3>
+        <p class="story-summary">{{ story.summary|truncatewords:23 }}</p>
+        {% include 'news/includes/story_meta.html' %}
+    </div>
+</article>

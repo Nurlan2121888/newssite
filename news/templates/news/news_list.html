@@ -1,0 +1,57 @@
+{% extends 'news/base.html' %}
+{% block title %}{% if selected_category %}{{ selected_category.name }}{% else %}Günün gündəmi{% endif %}{% endblock %}
+{% block content %}
+<div class="page-kicker"><span><span class="red-square" aria-hidden="true"></span>{% if selected_category %}{{ selected_category.name }}{% else %}GÜNÜN GÜNDƏMİ{% endif %}</span><span class="issue-label">{{ edition_date|date:'m / Y' }} <span class="kicker-divider">/</span> CARİ AY</span></div>
+
+{% if lead_story %}
+    <section class="hero-grid" aria-label="Ön plandakı xəbərlər">
+        <article class="lead-story" data-news-id="{{ lead_story.pk }}">
+            {% if lead_story.image_url %}<img class="lead-image" src="{{ lead_story.image_url }}" alt="" fetchpriority="high" referrerpolicy="no-referrer">{% else %}<div class="lead-placeholder" aria-hidden="true">g.</div>{% endif %}
+            <div class="lead-shade"></div>
+            {% if lead_story.category %}<a class="lead-category" href="{% url 'news:news_list' %}?category={{ lead_story.category.slug|urlencode }}">{{ lead_story.category.name }}</a>{% endif %}
+
+            <div class="lead-copy">
+                <p class="lead-eyebrow">XƏBƏRİN MƏRKƏZİNDƏ</p>
+                <h1><a href="{% url 'news:news_detail' lead_story.slug %}">{{ lead_story.title }}</a></h1>
+                {% include 'news/includes/story_meta.html' with story=lead_story %}
+            </div>
+        </article>
+
+        {% if feed_stories %}
+            <aside class="news-wire" aria-labelledby="wire-title">
+                <div class="wire-heading"><h2 id="wire-title">Xəbər axını</h2><span class="wire-dot" aria-hidden="true"></span></div>
+                <p class="wire-subtitle">Gündəmdə daha nələr var?</p>
+                {% for story in feed_stories %}
+                    <article class="wire-item">
+                        <span class="wire-number">0{{ forloop.counter }}</span>
+                        <div><time class="wire-time" datetime="{{ story.published_at|date:'c' }}">{{ story.published_at|date:'d.m · H:i' }}</time><h3><a href="{% url 'news:news_detail' story.slug %}">{{ story.title }}</a></h3></div>
+                    </article>
+                {% endfor %}
+                <a class="wire-more" href="#news-grid">Xəbərlərə keç </a>
+            </aside>
+        {% endif %}
+    </section>
+
+    {% if secondary_stories %}
+        <section class="secondary-grid" aria-label="Digər ön plandakı xəbərlər">
+            {% for story in secondary_stories %}
+                <article class="secondary-story" data-news-id="{{ story.pk }}">
+                    <a class="secondary-image" href="{% url 'news:news_detail' story.slug %}" tabindex="-1" aria-hidden="true">{% if story.image_url %}<img src="{{ story.image_url }}" alt="" loading="lazy" referrerpolicy="no-referrer">{% else %}<span class="image-placeholder">g<span>.</span></span>{% endif %}</a>
+                    <div class="secondary-copy">{% if story.category %}<span class="category-label">{{ story.category.name }}</span>{% endif %}<h2><a href="{% url 'news:news_detail' story.slug %}">{{ story.title }}</a></h2>{% include 'news/includes/story_meta.html' %}</div>
+                </article>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <section class="all-news-section" id="news-grid" aria-labelledby="all-news-title">
+        <div class="section-heading"><div><span class="section-index">01 / XƏBƏRLƏR</span><h2 id="all-news-title">{% if selected_category %}{{ selected_category.name }}{% else %}Gündəmə yaxından bax{% endif %}<span class="heading-dot">.</span></h2></div><span class="news-count">{{ news_items|length }} xəbər </span></div>
+        {% if grid_stories %}
+            <div class="news-grid">{% for story in grid_stories %}{% include 'news/includes/story_card.html' %}{% endfor %}</div>
+        {% else %}
+            <p class="muted">Bu bölmənin bütün xəbərləri yuxarıda göstərilib.</p>
+        {% endif %}
+    </section>
+{% else %}
+    <section class="empty-state"><span class="empty-mark" aria-hidden="true">g.</span><h1>Gündəm bir azdan yenilənəcək.</h1><p>Bu ay üçün bu bölmədə dərc edilmiş xəbər yoxdur.</p><a class="outline-button" href="{% url 'news:news_list' %}">Bütün xəbərlərə qayıt </a></section>
+{% endif %}
+{% endblock %}
